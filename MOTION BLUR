@@ -1,0 +1,43 @@
+-- IMPORTER (MAKE A SCRIPT)
+function onPlayerEntered(player)
+	repeat wait () until player.Character ~= nil
+	local s = script.MotionBlur:clone()
+	s.Parent = player.Character
+	s.Disabled = false
+	player.CharacterAdded:connect(function (char)
+		local s = script.MotionBlur:clone()
+		s.Parent = char
+		s.Disabled = false		
+	end)
+end
+
+game.Players.PlayerAdded:connect(onPlayerEntered)
+-- MOTION BLUR (MAKE LOCAL SCRIPT INSIDE IMPORTER)
+--//Made by XlAscensionlX
+
+BlurAmount =150 -- Change this to increase or decrease the blur size
+
+--//Declarations
+Camera 	= game.Workspace.CurrentCamera
+Last 	= Camera.CFrame.lookVector
+Blur 	= Instance.new("BlurEffect",Camera)
+
+--//Logic
+game.Workspace.Changed:connect(function(p)
+	if p == "CurrentCamera" then
+		Camera = game.Workspace.CurrentCamera
+		if Blur and Blur.Parent then
+			Blur.Parent = Camerax
+		else
+			Blur = Instance.new("BlurEffect",Camera)
+		end
+	end
+end)
+
+game:GetService("RunService").Heartbeat:connect(function()
+	if not Blur or Blur.Parent == nil then Blur = Instance.new("BlurEffect",Camera) end
+	
+	local magnitude = (Camera.CFrame.lookVector - Last).magnitude
+	Blur.Size = math.abs(magnitude)*BlurAmount
+	Last = Camera.CFrame.lookVector
+end)
